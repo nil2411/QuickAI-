@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+
+body {
+  font-family: "Outfit", sans-serif;
+}
+
+@theme{
+    --color-primary : #5044E5;
+}
+
+.reset-tw, .reset-tw *{
+  all : revert !important;
+}
+
+.article-prose {
+  line-height: 1.75;
+  color: #475569;
+  font-size: 0.9375rem;
+}
+
+.article-prose h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1rem;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.article-prose h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 1.75rem 0 0.75rem;
+  line-height: 1.4;
+}
+
+.article-prose h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.article-prose p {
+  margin: 0 0 1rem;
+}
+
+.article-prose ul,
+.article-prose ol {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.article-prose li {
+  margin-bottom: 0.4rem;
+}
+
+.article-prose li::marker {
+  color: #4a7aff;
+}
+
+.article-prose strong {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.article-prose blockquote {
+  border-left: 3px solid #4a7aff;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #64748b;
+  font-style: italic;
+}
+
+.article-prose hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.5rem 0;
+}
