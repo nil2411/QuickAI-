@@ -2,12 +2,25 @@ import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import sql from "../configs/db.js"; 
 import { v2 as cloudinary } from "cloudinary";
-import fs from 'fs'
 import { PDFParse } from 'pdf-parse';
 
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 const GEMINI_MODEL = process.env.GEMINI_MODEL?.trim() || "gemini-2.0-flash";
+
+/** Multer memory (Vercel) or disk (local) → Cloudinary-friendly source */
+const fileToUploadSource = (file) => {
+    if (file?.buffer) {
+        const mime = file.mimetype || "application/octet-stream";
+        return `data:${mime};base64,${file.buffer.toString("base64")}`;
+    }
+    return file?.path;
+};
+
+const fileToBuffer = (file) => {
+    if (file?.buffer) return file.buffer;
+    throw new Error("Uploaded file buffer is missing");
+};
 
 const wordCountToMaxTokens = (wordCount) =>
     Math.min(Math.ceil(Number(wordCount) * 1.5), 8192);
@@ -359,7 +372,7 @@ export const RemoveImageBackground = async(req,res) =>{
 
         
 
-       const {secure_url} = await cloudinary.uploader.upload(image.path,{
+       const {secure_url} = await cloudinary.uploader.upload(fileToUploadSource(image),{
           transformation :[
             {
 
@@ -437,7 +450,7 @@ export const RemoveImageObject = async(req,res) =>{
 
         
 
-       const { public_id } = await cloudinary.uploader.upload(image.path);
+       const { public_id } = await cloudinary.uploader.upload(fileToUploadSource(image));
 
        const imageurl = cloudinary.url(public_id,{
         transformation : [{effect : `gen_remove:prompt_${objectDesc}`}],
@@ -503,7 +516,7 @@ export const ResumeReview = async(req,res) =>{
             })
         }
 
-        const dataBuffer = fs.readFileSync(resume.path);
+        const dataBuffer = fileToBuffer(resume);
 
         const parser = new PDFParse({ data: dataBuffer });
         const pdfData = await parser.getText();

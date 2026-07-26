@@ -1,6 +1,7 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({});
-
-export const upload = multer({storage});
-
+// Memory storage works on Vercel (no writable disk for uploads)
+export const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
