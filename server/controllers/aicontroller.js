@@ -2,7 +2,6 @@ import { clerkClient } from "@clerk/express";
 import axios from "axios";
 import sql from "../configs/db.js"; 
 import { v2 as cloudinary } from "cloudinary";
-import { PDFParse } from 'pdf-parse';
 
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
@@ -517,6 +516,7 @@ export const ResumeReview = async(req,res) =>{
         }
 
         const dataBuffer = fileToBuffer(resume);
+        const { PDFParse } = await import('pdf-parse');
 
         const parser = new PDFParse({ data: dataBuffer });
         const pdfData = await parser.getText();
