@@ -157,7 +157,7 @@ const RemoveObjects = () => {
       </form>
 
       {/* right col */}
-      <div className='flex min-h-80 w-full max-w-xl flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[32rem] xl:h-[36rem] xl:max-w-lg'>
+      <div className='flex min-h-[32rem] w-full max-w-xl flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[34rem] xl:h-[36rem] xl:max-w-lg'>
         <div className='flex items-center gap-3 shrink-0'>
           <Scissors className='w-5 h-5 text-[#3B82F6]'/>
           <h1 className='text-lg font-semibold sm:text-xl'>Processed images</h1>

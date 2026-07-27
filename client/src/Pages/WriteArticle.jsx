@@ -123,7 +123,7 @@ const WriteArticle = () => {
         </button>
       </form>
 
-      <div className='flex min-h-80 w-full min-w-0 flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-96 lg:max-h-[calc(100vh-7rem)]'>
+      <div className='flex min-h-[32rem] w-full min-w-0 flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[34rem] lg:max-h-[calc(100vh-7rem)]'>
         <div className='flex items-center justify-between gap-3 shrink-0'>
           <div className='flex items-center gap-3'>
             <Edit className='w-5 h-5 text-[#4A7AFF]' />

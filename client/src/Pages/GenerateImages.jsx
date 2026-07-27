@@ -145,14 +145,14 @@ const GenerateImages = () => {
       </form>
 
       {/* Right Side */}
-      <div className="min-h-80 w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 sm:min-h-96 xl:max-w-lg">
+      <div className="min-h-[32rem] w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[34rem] xl:max-w-lg">
         <div className="flex items-center gap-3 mb-4">
           <Image className="w-5 h-5 text-[#00AD25]" />
           <h1 className="text-lg font-semibold sm:text-xl">Generated Image</h1>
         </div>
 
         {!content ? (
-          <div className="flex h-80 items-center justify-center">
+          <div className="flex min-h-[26rem] items-center justify-center">
             <div className="text-center text-gray-400">
               <Image className="mx-auto w-12 h-12 mb-4" />
               <p className="px-3">Describe your image and click Generate Image.</p>
