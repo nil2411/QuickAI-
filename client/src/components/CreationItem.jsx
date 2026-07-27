@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Markdown from 'react-markdown'
-import { FileText, Hash, Image as ImageIcon, Sparkles, X } from 'lucide-react'
+import { Check, Copy, Download, FileText, Hash, Image as ImageIcon, Sparkles, X } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const typeConfig = {
   article: {
@@ -77,6 +78,7 @@ const getPreviewLines = (content = '', maxLines = 4) => {
 
 const CreationItem = ({ item }) => {
   const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const config = typeConfig[item.type] || {
     label: item.type,
     icon: Sparkles,
@@ -88,6 +90,46 @@ const CreationItem = ({ item }) => {
   const displayPrompt = getDisplayPrompt(item)
   const previewLines = getPreviewLines(item.content)
   const previewText = stripMarkdown(item.content)
+  const isTextType = ['article', 'blog-title', 'resume-review'].includes(item.type)
+  const isImageType = item.type === 'image'
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(item.content)
+      setCopied(true)
+      toast.success('Copied to clipboard')
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to copy content')
+    }
+  }
+
+  const handleDownload = async () => {
+    if (!item.content) return
+
+    try {
+      const response = await fetch(item.content)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      const safeName = displayPrompt
+        .replace(/[^a-z0-9]+/gi, '-')
+        .replace(/^-|-$/g, '')
+        .toLowerCase()
+
+      link.href = url
+      link.download = `${safeName || `creation-${item.id}`}.png`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      toast.success('Image downloaded')
+    } catch (error) {
+      console.error(error)
+      toast.error('Failed to download image')
+    }
+  }
 
   useEffect(() => {
     if (!open) return
@@ -225,6 +267,30 @@ const CreationItem = ({ item }) => {
                 </div>
               )}
             </div>
+
+            {(isTextType || isImageType) && (
+              <div className='border-t border-gray-100 px-5 py-4'>
+                {isTextType ? (
+                  <button
+                    type='button'
+                    onClick={handleCopy}
+                    className='inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-gray-50'
+                  >
+                    {copied ? <Check className='h-4 w-4 text-green-600' /> : <Copy className='h-4 w-4' />}
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                ) : (
+                  <button
+                    type='button'
+                    onClick={handleDownload}
+                    className='inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-gray-50'
+                  >
+                    <Download className='h-4 w-4' />
+                    Download
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
