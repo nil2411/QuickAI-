@@ -179,9 +179,17 @@ export const generateArticle = async(req,res) =>{
         }
 
         const {userId} = req.auth();
-        const {prompt,length} = req.body;
+        const {prompt, topic, length, lengthLabel} = req.body;
         const plan = req.plan;
         const free_usage = req.free_usage;
+        const cleanTopic = (topic || prompt || "").trim();
+
+        if (!cleanTopic) {
+            return res.json({
+                success: false,
+                message: "Topic is required to generate an article.",
+            });
+        }
 
         if(plan !== 'premium' && free_usage >= 10){
             return res.json({
@@ -191,8 +199,11 @@ export const generateArticle = async(req,res) =>{
 
         }
 
+        const lengthText = (lengthLabel || "").trim() || "well-structured";
+        const systemPrompt = `Write a detailed article on the topic: "${cleanTopic}". The article should be ${lengthText.toLowerCase()} and well-structured with an engaging introduction, informative body, and a concise conclusion. Format the response in clean Markdown using a # title, ## section headings, and well-spaced paragraphs. Make sure the content is original, clear, and informative.`;
+
         const { content } = await generateGeminiText({
-            prompt: `You are a helpful assistant.\n\n${prompt}`,
+            prompt: `You are a helpful assistant.\n\n${systemPrompt}`,
             models: TEXT_MODELS,
             temperature: 0.7,
             maxOutputTokens: wordCountToMaxTokens(length),
@@ -205,7 +216,7 @@ export const generateArticle = async(req,res) =>{
             });
         }
 
-        await sql`insert into creations (user_id,prompt,content,type) values(${userId},${prompt},${content},'article')`;
+        await sql`insert into creations (user_id,prompt,content,type) values(${userId},${cleanTopic},${content},'article')`;
 
         if(plan !== 'premium'){
             await clerkClient.users.updateUserMetadata(userId, {
@@ -242,7 +253,12 @@ export const generateBlogTitle = async(req,res) =>{
         const plan = req.plan;
         const free_usage = req.free_usage;
         const cleanTopic = topic?.trim();
-        const cleanPrompt = prompt?.trim() || (cleanTopic ? buildBlogTitlePrompt(cleanTopic, category) : "");
+        const displayPrompt = cleanTopic
+            ? `${cleanTopic} (${category})`
+            : (prompt?.trim() || "");
+        const cleanPrompt = cleanTopic
+            ? buildBlogTitlePrompt(cleanTopic, category)
+            : (prompt?.trim() || "");
 
         if (!cleanPrompt) {
             return res.json({
@@ -271,7 +287,7 @@ export const generateBlogTitle = async(req,res) =>{
             });
         }
 
-        await sql`insert into creations (user_id,prompt,content,type) values(${userId},${cleanPrompt},${content},'blog-title')`;
+        await sql`insert into creations (user_id,prompt,content,type) values(${userId},${displayPrompt},${content},'blog-title')`;
 
         if(plan !== 'premium'){
             await clerkClient.users.updateUserMetadata(userId, {
@@ -299,9 +315,17 @@ export const generateImage = async(req,res) =>{
     try {
         
         const {userId} = req.auth();
-        const {prompt,publish} = req.body;
+        const {prompt, style = "Realistic", publish} = req.body;
         const plan = req.plan;
         const free_usage = req.free_usage;
+        const cleanPrompt = (prompt || "").trim();
+
+        if (!cleanPrompt) {
+            return res.json({
+                success : false,
+                message : "Please describe the image you want to generate"
+            })
+        }
 
         if(plan !== 'premium' && free_usage >= 10){
             return res.json({
@@ -311,8 +335,11 @@ export const generateImage = async(req,res) =>{
 
         }
 
+        const displayPrompt = `${cleanPrompt} (${style})`;
+        const generationPrompt = `Generate a highly detailed and visually evocative image based on the following prompt: "${cleanPrompt}". The image should be in a "${style}" style. Use descriptive language to specify the subject, setting, mood, and any notable artistic qualities.`;
+
         const form = new FormData()
-        form.append('prompt', prompt);
+        form.append('prompt', generationPrompt);
         const {data} = await axios.post('https://clipdrop-api.co/text-to-image/v1',form,{
             headers : {    'x-api-key': process.env.CLIPDROP_API},
             responseType : "arraybuffer",
@@ -323,7 +350,7 @@ export const generateImage = async(req,res) =>{
        const {secure_url} = await cloudinary.uploader.upload(base64Image);
 
 
-        await sql`insert into creations (user_id,prompt,content,type,publish) values(${userId},${prompt},${secure_url},'image', ${publish ?? false})`;
+        await sql`insert into creations (user_id,prompt,content,type,publish) values(${userId},${displayPrompt},${secure_url},'image', ${publish ?? false})`;
 
         // if(plan !== 'premium'){
         //     await clerkClient.users.updateUserMetadata(userId, {

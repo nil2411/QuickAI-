@@ -54,11 +54,13 @@ const WriteArticle = () => {
         return
       }
 
-      const prompt = `Write a detailed article on the topic: "${topic}". The article should be ${selectedLength.text.toLowerCase()} and well-structured with an engaging introduction, informative body, and a concise conclusion. Format the response in clean Markdown using a # title, ## section headings, and well-spaced paragraphs. Make sure the content is original, clear, and informative.`
-
       const { data } = await axios.post(
         '/api/ai/generate-article',
-        { prompt, length: selectedLength.length },
+        {
+          topic,
+          length: selectedLength.length,
+          lengthLabel: selectedLength.text,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       )
 

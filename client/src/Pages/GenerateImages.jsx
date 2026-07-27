@@ -56,12 +56,11 @@ const GenerateImages = () => {
         return;
       }
 
-      const prompt = `Generate a highly detailed and visually evocative image description based on the following prompt: "${input}". The image should be in a "${selectStyle}" style. Use descriptive language to specify the subject, setting, mood, and any notable artistic qualities.`;
-
       const { data } = await axios.post(
         "/api/ai/generate-image",
         {
-          prompt,
+          prompt: input.trim(),
+          style: selectStyle,
           publish,
         },
         {

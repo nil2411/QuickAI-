@@ -62,12 +62,9 @@ const BlogTitles = () => {
         return
       }
 
-      const prompt = `Generate 10 creative and catchy blog post titles about "${topic}" in the "${selectCategory}" category. Make sure each title is unique, engaging, and relevant to the topic. List only the titles in Markdown format as a simple numbered list.`
- 
-
       const { data } = await axios.post(
         '/api/ai/generate-blog-title',
-        { prompt, topic, category: selectCategory },
+        { topic, category: selectCategory },
         { headers: { Authorization: `Bearer ${token}` } }
       )
 
