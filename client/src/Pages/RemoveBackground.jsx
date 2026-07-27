@@ -1,5 +1,5 @@
 import { Eraser, Sparkles } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from "axios";
 import { useAuth } from "@clerk/react";
 import toast from "react-hot-toast";
@@ -7,21 +7,39 @@ import toast from "react-hot-toast";
 const RemoveBackground = () => {
   const [input, setInput] = useState(null)
   const [preview, setPreview] = useState(null)
+  const previewUrlRef = useRef(null)
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
 
   const { getToken } = useAuth();
 
 
-  useEffect(() => {
-    if (!input) {
-      setPreview(null)
-      return
+  const clearPreview = () => {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current)
+      previewUrlRef.current = null
     }
-    const url = URL.createObjectURL(input)
-    setPreview(url)
-    return () => URL.revokeObjectURL(url)
-  }, [input])
+    setPreview(null)
+  }
+
+  const handleFileChange = (file) => {
+    clearPreview()
+    setInput(file)
+
+    if (file) {
+      const url = URL.createObjectURL(file)
+      previewUrlRef.current = url
+      setPreview(url)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
+      }
+    }
+  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -74,13 +92,13 @@ const RemoveBackground = () => {
     }
   }
   return (
-    <div className='h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700'>
+    <div className='flex h-full flex-col items-start gap-4 overflow-y-auto p-4 text-slate-700 sm:p-6 xl:flex-row'>
       {/* left col */}
-      <form onSubmit={onSubmitHandler} className='w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200'>
+      <form onSubmit={onSubmitHandler} className='w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 xl:max-w-lg'>
         <div className='flex items-center gap-3'>
           <Sparkles className='w-6 text-[#FF9800]' />
 
-          <h1 className='text-xl font-semibold '>Background Removal</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Background Removal</h1>
 
         </div>
         <p className='mt-6 text-sm font-medium'>Upload image</p>
@@ -89,7 +107,7 @@ const RemoveBackground = () => {
           accept="image/*"
           className='w-full p-2 px-3 mt-2 outline-none text-sm text-gray-500 rounded-md border border-gray-300 file:text-sm file:font-semibold file:text-gray-700'
           required
-          onChange={(e) => setInput(e.target.files[0] || null)}
+          onChange={(e) => handleFileChange(e.target.files[0] || null)}
         />
 
         {preview && (
@@ -118,7 +136,7 @@ const RemoveBackground = () => {
         </div> */}
 
         <br />
-        <button className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#FFB75E] to-[#FF5736] text-white px-4 py-3 mt-6 text-base rounded-xl cursor-pointer font-medium">
+        <button className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#FFB75E] to-[#FF5736] px-4 py-3 text-base font-medium text-white">
 
         {loading ? (
             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -133,18 +151,18 @@ const RemoveBackground = () => {
       </form>
 
       {/* right col */}
-      <div className='w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-[36rem] h-[36rem]'>
+      <div className='flex min-h-80 w-full max-w-xl flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[32rem] xl:h-[36rem] xl:max-w-lg'>
         <div className='flex items-center gap-3 shrink-0'>
           <Eraser className='w-5 h-5 text-[#FF9800]' />
 
-          <h1 className='text-xl font-semibold'>Processed images</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Processed images</h1>
 
         </div>
         {!content ? (
           <div className="flex flex-1 items-center justify-center">
             <div className="text-center text-gray-400">
               <Eraser className="mx-auto w-12 h-12 mb-4" />
-              <p>Upload an image and click "Remove Background" to get started</p>
+              <p className='px-3'>Upload an image and click "Remove Background" to get started</p>
             </div>
           </div>
         ) : (

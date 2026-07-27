@@ -1,8 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   font-family: "Outfit", sans-serif;
+  overflow-x: hidden;
 }
 
 @theme{

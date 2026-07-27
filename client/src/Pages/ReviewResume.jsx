@@ -1,5 +1,5 @@
 import { FileText, Sparkles } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from "axios";
 import { useAuth } from "@clerk/react";
 import toast from "react-hot-toast";
@@ -10,20 +10,38 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 const ReviewResume = () => {
   const [input, setInput] = useState(null)
   const [preview, setPreview] = useState(null)
+  const previewUrlRef = useRef(null)
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState("");
 
   const { getToken } = useAuth();
 
-  useEffect(() => {
-    if (!input) {
-      setPreview(null)
-      return
+  const clearPreview = () => {
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current)
+      previewUrlRef.current = null
     }
-    const url = URL.createObjectURL(input)
-    setPreview(url)
-    return () => URL.revokeObjectURL(url)
-  }, [input])
+    setPreview(null)
+  }
+
+  const handleFileChange = (file) => {
+    clearPreview()
+    setInput(file)
+
+    if (file) {
+      const url = URL.createObjectURL(file)
+      previewUrlRef.current = url
+      setPreview(url)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) {
+        URL.revokeObjectURL(previewUrlRef.current)
+      }
+    }
+  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -84,12 +102,12 @@ const ReviewResume = () => {
   }
 
   return (
-    <div className='h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700'>
+    <div className='flex h-full flex-col items-start gap-4 overflow-y-auto p-4 text-slate-700 sm:p-6 xl:flex-row'>
       {/* left col */}
-      <form onSubmit={onSubmitHandler} className='w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200'>
+      <form onSubmit={onSubmitHandler} className='w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 xl:max-w-lg'>
         <div className='flex items-center gap-3'>
           <Sparkles className='w-6' style={{ color: '#1de9b6' }} />
-          <h1 className='text-xl font-semibold '>Resume Review</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Resume Review</h1>
         </div>
 
         <p className='mt-6 text-sm font-medium'>Upload Resume</p>
@@ -98,7 +116,7 @@ const ReviewResume = () => {
           accept='application/pdf,.pdf'
           className='w-full p-2 px-3 mt-2 outline-none text-sm text-gray-500 rounded-md border border-gray-300 file:text-sm file:font-semibold file:text-gray-700'
           required
-          onChange={(e) => setInput(e.target.files[0] || null)}
+          onChange={(e) => handleFileChange(e.target.files[0] || null)}
         />
 
         {preview && input && (
@@ -114,7 +132,7 @@ const ReviewResume = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-[#19d3ae] to-[#009fd9] text-white px-4 py-3 mt-6 text-base rounded-xl cursor-pointer font-medium disabled:opacity-70"
+          className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#19d3ae] to-[#009fd9] px-4 py-3 text-base font-medium text-white disabled:opacity-70"
         >
           {loading ? (
             <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -126,10 +144,10 @@ const ReviewResume = () => {
       </form>
 
       {/* right col */}
-      <div className='w-full max-w-lg p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-[36rem] h-[36rem]'>
+      <div className='flex min-h-80 w-full max-w-xl flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-[32rem] xl:h-[36rem] xl:max-w-lg'>
         <div className='flex items-center gap-3 shrink-0'>
           <FileText className='w-5 h-5 text-[#1de9b6]'/>
-          <h1 className='text-xl font-semibold'>Analysis Results</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Analysis Results</h1>
         </div>
 
         {!content ? (

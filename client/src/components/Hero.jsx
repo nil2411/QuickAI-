@@ -1,11 +1,10 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets';
 
 const Hero = () => {
     const navigate = useNavigate();
     return (
-        <div className='px-4 sm:px-20 xl:px-32 relative inline-flex flex-col w-full justify-center bg-[url(/gradientBackground.png)] bg-cover bg-no-repeat min-h-screen'>
+        <div className='relative inline-flex min-h-screen w-full flex-col justify-center bg-[url(/gradientBackground.png)] bg-cover bg-no-repeat px-4 pb-14 pt-24 sm:px-20 xl:px-32'>
 
             <div className='text-center mb-6'>
                 <h1 className='text-3xl sm:text-5xl md:text-6xl 2xl:text-7xl font-semibold mx-auto leading-[1.2] '>
@@ -18,15 +17,15 @@ const Hero = () => {
                 </p>
 
             </div>
-            <div className='flex flex-wrap justify-center gap-4 text-sm max-sm max-sm:text-xs'>
-                <button className='bg-primary text-white px-10 py-3 rounded-lg hover:scale-102 active:scale-95 transition cursor-pointer' onClick={() => navigate('/ai')}>Start creating now</button>
-                <button className='bg-gray-50 text-black px-10 py-3 rounded-lg border border-gray-200 hover:bg-gray-100 hover:scale-102 active:scale-95 transition cursor-pointer'>
+            <div className='mx-auto flex w-full max-w-sm flex-col justify-center gap-4 text-sm sm:max-w-none sm:flex-row'>
+                <button className='w-full cursor-pointer rounded-lg bg-primary px-6 py-3 text-white transition hover:scale-102 active:scale-95 sm:w-auto sm:px-10' onClick={() => navigate('/ai')}>Start creating now</button>
+                <button className='w-full cursor-pointer rounded-lg border border-gray-200 bg-gray-50 px-6 py-3 text-black transition hover:scale-102 hover:bg-gray-100 active:scale-95 sm:w-auto sm:px-10'>
                     Watch demo
                 </button>
            
             </div>
 
-            <div className='flex items-center gap-4 mt-8 mx-auto text-gray-600'>
+            <div className='mx-auto mt-8 flex flex-wrap items-center justify-center gap-3 text-center text-sm text-gray-600 sm:gap-4'>
                 <img src={assets.user_group} alt="" className='h-8' />Trusted by 10K+ people 
             </div>
 

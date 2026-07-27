@@ -92,12 +92,12 @@ const BlogTitles = () => {
     }
   }
   return (
-    <div className='h-full overflow-y-scroll p-6 flex items-start flex-wrap lg:flex-nowrap gap-4 text-slate-700'>
+    <div className='flex h-full flex-col items-start gap-4 overflow-y-auto p-4 text-slate-700 sm:p-6 lg:flex-row'>
       {/* left col */}
       <form onSubmit={onSubmitHandler} className='w-full lg:w-96 shrink-0 p-4 bg-white rounded-lg border border-gray-200'>
         <div className='flex items-center gap-3'>
           <Sparkles className='w-6 text-[#8E37EB]' />
-          <h1 className='text-xl font-semibold '>Title configuration</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Title configuration</h1>
 
         </div>
         <p className='mt-6 text-sm font-medium'>Keyword</p>
@@ -138,11 +138,11 @@ const BlogTitles = () => {
       </form>
 
       {/* right col */}
-      <div className='w-full flex-1 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[calc(100vh-7rem)]'>
+      <div className='flex min-h-80 w-full min-w-0 flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-96 lg:max-h-[calc(100vh-7rem)]'>
         <div className='flex items-center justify-between gap-3 shrink-0'>
           <div className='flex items-center gap-3'>
             <Hash className='w-5 h-5 text-[#8E37EB]'/>
-            <h1 className='text-xl font-semibold'>Generated Titles</h1>
+            <h1 className='text-lg font-semibold sm:text-xl'>Generated Titles</h1>
           </div>
 
           {content && (
@@ -163,7 +163,7 @@ const BlogTitles = () => {
           {errorMessage ? (
             <p className='max-w-sm text-center text-red-500'>{errorMessage}</p>
           ) : (
-            <p>Enter a topic and click &quot;Generate Titles&quot; to get started</p>
+            <p className='px-3 text-center'>Enter a topic and click &quot;Generate Titles&quot; to get started</p>
           )}
 
 

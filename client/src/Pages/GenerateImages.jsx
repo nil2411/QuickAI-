@@ -1,5 +1,5 @@
 import { Sparkles, Image } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/react";
 import toast from "react-hot-toast";
@@ -73,15 +73,15 @@ const GenerateImages = () => {
   };
 
   return (
-    <div className="h-full overflow-y-scroll p-6 flex items-start flex-wrap gap-4 text-slate-700">
+    <div className="flex h-full flex-col items-start gap-4 overflow-y-auto p-4 text-slate-700 sm:p-6 xl:flex-row">
       {/* Left Side */}
       <form
         onSubmit={onSubmitHandler}
-        className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200"
+        className="w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 xl:max-w-lg"
       >
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 text-[#00AD25]" />
-          <h1 className="text-xl font-semibold">AI Image Generator</h1>
+          <h1 className="text-lg font-semibold sm:text-xl">AI Image Generator</h1>
         </div>
 
         <p className="mt-6 text-sm font-medium">Describe your image</p>
@@ -145,17 +145,17 @@ const GenerateImages = () => {
       </form>
 
       {/* Right Side */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg border border-gray-200 min-h-96">
+      <div className="min-h-80 w-full max-w-xl rounded-lg border border-gray-200 bg-white p-4 sm:min-h-96 xl:max-w-lg">
         <div className="flex items-center gap-3 mb-4">
           <Image className="w-5 h-5 text-[#00AD25]" />
-          <h1 className="text-xl font-semibold">Generated Image</h1>
+          <h1 className="text-lg font-semibold sm:text-xl">Generated Image</h1>
         </div>
 
         {!content ? (
           <div className="flex h-80 items-center justify-center">
             <div className="text-center text-gray-400">
               <Image className="mx-auto w-12 h-12 mb-4" />
-              <p>Describe your image and click Generate Image.</p>
+              <p className="px-3">Describe your image and click Generate Image.</p>
             </div>
           </div>
         ) : (

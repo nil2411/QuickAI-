@@ -1,5 +1,5 @@
 import { Check, Copy, Edit, Sparkles } from 'lucide-react'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useAuth } from '@clerk/react'
 import toast from 'react-hot-toast'
@@ -76,11 +76,11 @@ const WriteArticle = () => {
   }
 
   return (
-    <div className='h-full overflow-y-scroll p-6 flex items-start flex-wrap lg:flex-nowrap gap-4 text-slate-700'>
+    <div className='flex h-full flex-col items-start gap-4 overflow-y-auto p-4 text-slate-700 sm:p-6 lg:flex-row'>
       <form onSubmit={onSubmitHandler} className='w-full lg:w-96 shrink-0 p-4 bg-white rounded-lg border border-gray-200'>
         <div className='flex items-center gap-3'>
           <Sparkles className='w-6 text-[#4A7Aff]' />
-          <h1 className='text-xl font-semibold '>Article configuration</h1>
+          <h1 className='text-lg font-semibold sm:text-xl'>Article configuration</h1>
         </div>
 
         <p className='mt-6 text-sm font-medium'>Article Topic</p>
@@ -123,11 +123,11 @@ const WriteArticle = () => {
         </button>
       </form>
 
-      <div className='w-full flex-1 p-4 bg-white rounded-lg flex flex-col border border-gray-200 min-h-96 max-h-[calc(100vh-7rem)]'>
+      <div className='flex min-h-80 w-full min-w-0 flex-1 flex-col rounded-lg border border-gray-200 bg-white p-4 sm:min-h-96 lg:max-h-[calc(100vh-7rem)]'>
         <div className='flex items-center justify-between gap-3 shrink-0'>
           <div className='flex items-center gap-3'>
             <Edit className='w-5 h-5 text-[#4A7AFF]' />
-            <h1 className='text-xl font-semibold'>Generated Article</h1>
+            <h1 className='text-lg font-semibold sm:text-xl'>Generated Article</h1>
           </div>
 
           {content && (
@@ -146,7 +146,7 @@ const WriteArticle = () => {
           <div className='flex flex-1 justify-center items-center'>
             <div className='text-sm flex flex-col items-center gap-5 text-gray-400'>
               <Edit className='w-9 h-9 ' />
-              <p>Enter a topic and click &quot;Generate Article&quot; to get started</p>
+              <p className='px-3 text-center'>Enter a topic and click &quot;Generate Article&quot; to get started</p>
             </div>
           </div>
         ) : (

@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from './Pages/Home'
 import Layout from './Pages/Layout'
@@ -10,7 +9,6 @@ import RemoveBackground from './Pages/RemoveBackground'
 import ReviewResume from './Pages/ReviewResume'
 import Community from './Pages/Community'
 import RemoveObjects from './Pages/RemoveObjects'
-import { useAuth } from '@clerk/react'
 import {Toaster} from 'react-hot-toast'
 
 const App = () => {
