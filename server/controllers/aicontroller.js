@@ -516,11 +516,8 @@ export const ResumeReview = async(req,res) =>{
         }
 
         const dataBuffer = fileToBuffer(resume);
-        const { PDFParse } = await import('pdf-parse');
-
-        const parser = new PDFParse({ data: dataBuffer });
-        const pdfData = await parser.getText();
-        await parser.destroy();
+        const { default: pdf } = await import('pdf-parse/lib/pdf-parse.js');
+        const pdfData = await pdf(dataBuffer);
 
         const resumeText = (pdfData.text || "").trim();
         if (!resumeText) {
