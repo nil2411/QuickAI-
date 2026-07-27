@@ -1,4 +1,4 @@
-import { Scissors, Sparkles } from 'lucide-react'
+import { Download, Scissors, Sparkles } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import axios from "axios";
 import { useAuth } from "@clerk/react";
@@ -15,6 +15,26 @@ const RemoveObjects = () => {
   const [content, setContent] = useState("");
 
   const { getToken } = useAuth();
+
+  const handleDownload = async () => {
+    if (!content) return;
+
+    try {
+      const response = await fetch(content);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "object-removed-image.png";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to download image");
+    }
+  };
 
   const clearPreview = () => {
     if (previewUrlRef.current) {
@@ -171,12 +191,20 @@ const RemoveObjects = () => {
             </div>
           </div>
         ) : (
-          <div className="flex-1 min-h-0 mt-3 flex justify-center items-center overflow-hidden">
+          <div className="mt-3 flex min-h-0 flex-1 flex-col items-center justify-center gap-4 overflow-hidden">
             <img
               src={content}
               alt="Object removed"
               className="max-w-full max-h-full object-contain rounded-lg"
             />
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-gray-50"
+            >
+              <Download className="h-4 w-4" />
+              Download
+            </button>
           </div>
         )}
       </div>
