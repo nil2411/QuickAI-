@@ -8,24 +8,28 @@ const typeConfig = {
     icon: FileText,
     badge: 'bg-blue-50 text-blue-700 border-blue-200',
     accent: 'from-blue-500 to-cyan-500',
+    previewBg: 'bg-blue-50/40',
   },
   'blog-title': {
     label: 'Blog Title',
     icon: Hash,
     badge: 'bg-purple-50 text-purple-700 border-purple-200',
     accent: 'from-purple-500 to-violet-500',
+    previewBg: 'bg-purple-50/40',
   },
   image: {
     label: 'Image',
     icon: ImageIcon,
     badge: 'bg-green-50 text-green-700 border-green-200',
     accent: 'from-emerald-500 to-green-500',
+    previewBg: 'bg-green-50/40',
   },
   'resume-review': {
     label: 'Resume Review',
     icon: FileText,
     badge: 'bg-orange-50 text-orange-700 border-orange-200',
     accent: 'from-orange-500 to-amber-500',
+    previewBg: 'bg-orange-50/40',
   },
 }
 
@@ -39,13 +43,36 @@ const getDisplayPrompt = (item) => {
   if (topicMatch) return topicMatch[1]
 
   const aboutMatch = prompt.match(/about\s*['"]([^'"]+)['"]/i)
-  if (aboutMatch) return `${aboutMatch[1]}${prompt.includes('category') ? '' : ''}`
+  if (aboutMatch) return aboutMatch[1]
 
   if (prompt.length > 80) {
     return `${prompt.slice(0, 77)}...`
   }
 
   return prompt
+}
+
+const stripMarkdown = (content = '') =>
+  content
+    .replace(/#{1,6}\s/g, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\n+/g, ' ')
+    .trim()
+
+const getPreviewLines = (content = '', maxLines = 4) => {
+  const lines = content
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => stripMarkdown(line))
+    .filter(Boolean)
+
+  return lines.slice(0, maxLines)
 }
 
 const CreationItem = ({ item }) => {
@@ -55,9 +82,12 @@ const CreationItem = ({ item }) => {
     icon: Sparkles,
     badge: 'bg-gray-50 text-gray-700 border-gray-200',
     accent: 'from-gray-500 to-slate-500',
+    previewBg: 'bg-gray-50/40',
   }
   const Icon = config.icon
   const displayPrompt = getDisplayPrompt(item)
+  const previewLines = getPreviewLines(item.content)
+  const previewText = stripMarkdown(item.content)
 
   return (
     <div className='overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md'>
@@ -71,42 +101,56 @@ const CreationItem = ({ item }) => {
             <img
               src={item.content}
               alt={displayPrompt}
-              className='h-full w-full object-cover'
+              className='h-full w-full object-cover transition duration-300 group-hover:scale-105'
             />
-            <div className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3'>
+            <div className='absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-3'>
               <p className='line-clamp-2 text-sm font-medium text-white'>{displayPrompt}</p>
             </div>
           </div>
         ) : (
-          <div className={`bg-gradient-to-br ${config.accent} p-4 text-white`}>
-            <div className='flex items-start justify-between gap-3'>
-              <div className='min-w-0'>
-                <div className='mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-xs font-medium'>
-                  <Icon className='h-3.5 w-3.5' />
-                  {config.label}
+          <>
+            <div className={`bg-gradient-to-br ${config.accent} px-4 py-3 text-white`}>
+              <div className='flex items-start justify-between gap-3'>
+                <div className='min-w-0'>
+                  <div className='mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-xs font-medium'>
+                    <Icon className='h-3.5 w-3.5' />
+                    {config.label}
+                  </div>
+                  <p className='line-clamp-1 text-sm font-semibold'>{displayPrompt}</p>
                 </div>
-                <p className='line-clamp-2 text-sm font-medium'>{displayPrompt}</p>
+                <ChevronDown
+                  className={`h-5 w-5 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
+                />
               </div>
-              <ChevronDown
-                className={`h-5 w-5 shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
-              />
             </div>
-          </div>
+
+            <div className={`min-h-[7.5rem] px-4 py-3 ${config.previewBg}`}>
+              {item.type === 'blog-title' && previewLines.length > 0 ? (
+                <ul className='space-y-1.5 text-sm text-slate-600'>
+                  {previewLines.map((line, index) => (
+                    <li key={index} className='line-clamp-1 flex items-start gap-2'>
+                      <span className='mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400' />
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className='line-clamp-5 text-sm leading-6 text-slate-600'>
+                  {previewText || 'No preview available'}
+                </p>
+              )}
+            </div>
+          </>
         )}
 
-        <div className='flex items-center justify-between gap-3 p-4'>
-          <div className='min-w-0'>
-            {item.type === 'image' && (
-              <p className='line-clamp-1 text-sm font-medium text-slate-800'>{displayPrompt}</p>
-            )}
-            <p className='text-xs text-gray-500'>
-              {new Date(item.created_at).toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </p>
-          </div>
+        <div className='flex items-center justify-between gap-3 border-t border-gray-100 px-4 py-3'>
+          <p className='text-xs text-gray-500'>
+            {new Date(item.created_at).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+            })}
+          </p>
 
           <div className='flex items-center gap-2'>
             <span className={`rounded-full border px-2.5 py-1 text-xs font-medium ${config.badge}`}>
