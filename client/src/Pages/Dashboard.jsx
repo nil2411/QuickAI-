@@ -70,7 +70,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className='mt-6 w-full max-w-5xl space-y-3'>
+      <div className='mt-6 w-full max-w-6xl'>
         <p className='mb-4 font-medium text-slate-700'>Recent Creations</p>
 
         {loading ? (
@@ -82,7 +82,11 @@ const Dashboard = () => {
             <p>No creations yet. Start creating with the AI tools!</p>
           </div>
         ) : (
-          creations.map((item) => <CreationItem key={item.id} item={item} />)
+          <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+            {creations.map((item) => (
+              <CreationItem key={item.id} item={item} />
+            ))}
+          </div>
         )}
       </div>
     </div>
